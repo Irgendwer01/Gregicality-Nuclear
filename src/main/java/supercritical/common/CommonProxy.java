@@ -3,6 +3,7 @@ package supercritical.common;
 import java.util.Objects;
 import java.util.function.Function;
 
+import gregtech.api.metatileentity.registry.MTEManager;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -121,6 +122,11 @@ public class CommonProxy {
                 CoolantRegistry.registerCoolant(material.getFluid(prop.getCoolantKey()), prop);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void registerMTERegistry(MTEManager.MTERegistryEvent event) {
+        GregTechAPI.mteManager.createRegistry(SCValues.MODID);
     }
 
     @SubscribeEvent

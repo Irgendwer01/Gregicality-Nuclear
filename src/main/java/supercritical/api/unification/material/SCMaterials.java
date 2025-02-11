@@ -14,7 +14,7 @@ public class SCMaterials {
     public static Material Neptunium237;
     public static Material Neptunium239;
 
-    public static Material Plutonium; // Overrides CEu's Plutonium
+    // public static Material Plutonium; // Overrides CEu's Plutonium
     public static Material Plutonium238;
     /* public static Material Plutonium239 = Materials.Plutonium239; */
     public static Material Plutonium240;
@@ -22,7 +22,7 @@ public class SCMaterials {
     public static Material Plutonium242;
     public static Material Plutonium244;
 
-    public static Material Uranium; // Overrides CEu's Uranium
+    // public static Material Uranium; // Overrides CEu's Uranium
     /* public static Material Uranium235 = Materials.Uranium235; */
     /* public static Material Uranium238 = Materials.Uranium238; */
     public static Material Uranium239;
@@ -37,11 +37,11 @@ public class SCMaterials {
     public static Material HighPressureSteam;
     public static Material FissilePlutoniumDioxide;
     public static Material Zircaloy;
-    public static Material Zircon;
+    //public static Material Zircon;
     public static Material ZirconiumDioxide;
-    public static Material ZirconiumTetrachloride;
+    //public static Material ZirconiumTetrachloride;
     public static Material HafniumDioxide;
-    public static Material HafniumTetrachloride;
+    //public static Material HafniumTetrachloride;
     public static Material Inconel;
     public static Material BoronTrioxide;
     public static Material BoronCarbide;

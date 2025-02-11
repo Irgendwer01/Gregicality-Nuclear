@@ -613,7 +613,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             holder.setMetaTileEntity(tile);
                             holder.getMetaTileEntity().onPlacement();
                             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-                            return new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+                            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
                         }).toArray(BlockInfo[]::new));
     }
 

@@ -38,21 +38,24 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api("gregtech:gregtech:2.8.10-beta")
+    devOnlyNonPublishable(rfg.deobf(project.files("libs/gregtech-1.12.2-2.9.0-beta-dev.jar"))) // GTCEu 2.9.0
+    implementation rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848")
+    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-570458:5147702")
+    implementation("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
     api(rfg.deobf("curse.maven:opencomputers-223008:5274236"))
+    api("com.cleanroommc:modularui:2.5.0-rc3") { transitive = false }
+    api rfg.deobf("curse.maven:ctm-267602:2915363")
 
-
-    compileOnly rfg.deobf("curse.maven:gregicality-multiblocks-564858:5619513")
-    compileOnly rfg.deobf("curse.maven:gregtech-food-option-477021:5994740")
-    compileOnly rfg.deobf("curse.maven:susycore-846224:6101213")
-
-    // SuSy Core needs you
-    compileOnly rfg.deobf('curse.maven:geckolib-388172:4020277')
-    compileOnly rfg.deobf("curse.maven:universal-mod-core-371784:4975229") // Universal-Mod-Care v1.2.1
-    compileOnly rfg.deobf("curse.maven:track-api-282613:2825260") // Track-API v1.2.0
-    compileOnly rfg.deobf("curse.maven:immersive-railroading-277736:4970105") // Immersive-Railroading v1.10.0
-
-    compileOnly rfg.deobf("curse.maven:pyrotech-306676:5351359")
-    compileOnly rfg.deobf("curse.maven:athenaeum-284350:4633750")
-    compileOnly rfg.deobf("curse.maven:dropt-284973:5405050")
+    /*
+    compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3
+    compileOnly("curse.maven:voxelmap-225179:3029445") // VoxelMap 1.9.28
+    compileOnly("curse.maven:xaeros-263420:5394758") // Xaero's Minimap 24.2.0
+    compileOnly rfg.deobf("curse.maven:opencomputers-223008:5274236") // OpenComputers 1.8.5+179e1c3
+    compileOnly rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
+    compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
+    compileOnly rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
+    compileOnly rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
+    compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
+    compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
+     */
 }

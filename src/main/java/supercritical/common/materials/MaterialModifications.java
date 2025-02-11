@@ -1,6 +1,7 @@
 package supercritical.common.materials;
 
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.integration.groovy.MaterialPropertyExpansion.addOre;
 import static supercritical.api.unification.material.SCMaterials.HighPressureSteam;
 
 import gregtech.api.fluids.FluidBuilder;
@@ -19,14 +20,15 @@ public class MaterialModifications {
 
     public static void init() {
         // Zirconium
-        Zirconium.setProperty(PropertyKey.DUST, new DustProperty());
+        //Zirconium.setProperty(PropertyKey.DUST, new DustProperty());
 
         // Hafnium
         Hafnium.addFlags(MaterialFlags.GENERATE_LONG_ROD);
-        Hafnium.setProperty(PropertyKey.BLAST, new BlastProperty(2227));
+        // Hafnium.setProperty(PropertyKey.BLAST, new BlastProperty(2227));
         // Hafnium.setProperty(PropertyKey.INGOT, new IngotProperty());
 
         // Plutonium-239
+        addOre(Plutonium239);
         Plutonium239.getProperty(PropertyKey.ORE).setOreByProducts();
 
         // Uranium-238

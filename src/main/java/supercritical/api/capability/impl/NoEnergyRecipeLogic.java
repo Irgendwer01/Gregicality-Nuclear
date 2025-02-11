@@ -1,13 +1,15 @@
 package supercritical.api.capability.impl;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOC;
 
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import org.jetbrains.annotations.NotNull;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
 /**
  * Recipe Logic for a Multiblock that does not require power.
@@ -34,12 +36,12 @@ public class NoEnergyRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
         return true; // spoof energy being drawn
     }
 
     @Override
-    protected boolean hasEnoughPower(int @NotNull [] resultOverclock) {
+    protected boolean hasEnoughPower(long eut, int duration) {
         return true;
     }
 
@@ -48,18 +50,14 @@ public class NoEnergyRecipeLogic extends MultiblockRecipeLogic {
         return GTValues.LV;
     }
 
+    //TODO is this right?
     @Override
-    protected int @NotNull [] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt,
-                                                   long maxVoltage, int recipeDuration, int amountOC) {
-        return standardOverclockingLogic(
-                1,
-                getMaxVoltage(),
-                recipeDuration,
-                amountOC,
-                getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier()
+    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
 
-        );
+        ocParams.setEut(1);
+
+        standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(), getOverclockingVoltageFactor());
     }
 
     @Override

@@ -17,6 +17,8 @@ import supercritical.api.unification.SCElements;
 public class ElementMaterials {
 
     public static void register() {
+
+        /*
         Uranium = new Material.Builder(1, scId("uranium"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1405))
@@ -24,6 +26,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.U)
                 .build();
+         */
 
         Uranium239 = new Material.Builder(2, scId("uranium_239"))
                 .color(0x46FA46).iconSet(SHINY)
@@ -74,9 +77,11 @@ public class ElementMaterials {
                 .element(SCElements.Pu244)
                 .build();
 
+        /*
         Plutonium = new Material.Builder(11, scId("plutonium"))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu)
                 .build();
+         */
     }
 }

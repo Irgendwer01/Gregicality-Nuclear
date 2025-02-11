@@ -69,6 +69,7 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("UO2", true);
 
+        /*
         Zircon = new Material.Builder(506, scId("zircon"))
                 .gem().ore()
                 .color(0x6E0909)
@@ -76,6 +77,7 @@ public class FirstDegreeMaterials {
                 .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
                 .iconSet(SHINY)
                 .build();
+         */
 
         ZirconiumDioxide = new Material.Builder(507, scId("zirconium_dioxide"))
                 .dust()
@@ -84,6 +86,7 @@ public class FirstDegreeMaterials {
                 .components(Zirconium, 1, Oxygen, 2)
                 .build();
 
+        /*
         ZirconiumTetrachloride = new Material.Builder(508, scId("zirconium_tetrachloride"))
                 .dust()
                 .color(0x689FBF)
@@ -91,6 +94,7 @@ public class FirstDegreeMaterials {
                 .components(Zirconium, 1, Chlorine, 4)
                 .iconSet(SHINY)
                 .build();
+         */
 
         HafniumDioxide = new Material.Builder(509, scId("hafnium_dioxide"))
                 .dust()
@@ -99,6 +103,7 @@ public class FirstDegreeMaterials {
                 .components(Hafnium, 1, Oxygen, 2)
                 .build();
 
+        /*
         HafniumTetrachloride = new Material.Builder(510, scId("hafnium_tetrachloride"))
                 .dust()
                 .color(0x69699A)
@@ -106,6 +111,7 @@ public class FirstDegreeMaterials {
                 .components(Hafnium, 1, Chlorine, 4)
                 .iconSet(SHINY)
                 .build();
+         */
 
         Inconel = new Material.Builder(511, scId("inconel"))
                 .ingot().fluid()

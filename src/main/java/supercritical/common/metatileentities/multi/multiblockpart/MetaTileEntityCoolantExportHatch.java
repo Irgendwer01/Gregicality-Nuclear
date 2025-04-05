@@ -4,6 +4,7 @@ import static supercritical.SCValues.FISSION_LOCK_UPDATE;
 
 import java.util.List;
 
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -149,8 +150,8 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public void registerAbilities(List<ICoolantHandler> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override

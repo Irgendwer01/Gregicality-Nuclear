@@ -8,8 +8,6 @@ import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.properties.BlastProperty;
-import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import supercritical.api.unification.material.properties.CoolantProperty;
@@ -20,7 +18,7 @@ public class MaterialModifications {
 
     public static void init() {
         // Zirconium
-        //Zirconium.setProperty(PropertyKey.DUST, new DustProperty());
+        // Zirconium.setProperty(PropertyKey.DUST, new DustProperty());
 
         // Hafnium
         Hafnium.addFlags(MaterialFlags.GENERATE_LONG_ROD);

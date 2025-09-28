@@ -43,7 +43,7 @@ dependencies {
     compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-570458:5147702")
     implementation("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
     api(rfg.deobf("curse.maven:opencomputers-223008:5274236"))
-    api("com.cleanroommc:modularui:2.5.0-rc3") { transitive = false }
+    implementation("com.cleanroommc:modularui:2.5.0-rc4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363")
 
     /*

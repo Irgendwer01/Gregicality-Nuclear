@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,31 +28,40 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.*;
 import gregtech.api.util.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import supercritical.SCValues;
 import supercritical.api.capability.ICoolantHandler;
 import supercritical.api.capability.IFuelRodHandler;
 import supercritical.api.cover.ICustomEnergyCover;
 import supercritical.api.gui.SCGuiTextures;
-import supercritical.api.gui.widgets.UpdatedSliderWidget;
 import supercritical.api.metatileentity.multiblock.IFissionReactorHatch;
 import supercritical.api.metatileentity.multiblock.SCMultiblockAbility;
 import supercritical.api.nuclear.fission.*;
@@ -70,7 +79,7 @@ import supercritical.common.metatileentities.multi.multiblockpart.MetaTileEntity
 import supercritical.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportBus;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-                                          implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
+                                          implements IDataInfoProvider, ProgressBarMultiblock, ICustomEnergyCover {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -108,18 +117,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         return SCMetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
     }
 
-    @Override
-    public double getFillPercentage(int index) {
-        if (index == 0) {
-            return this.temperature / this.maxTemperature;
-        } else if (index == 1) {
-            return this.pressure / this.maxPressure;
-        } else {
-            if (this.maxPower / this.power > Math.exp(12)) {
-                return 0;
-            }
-            return (Math.log(this.power / this.maxPower) + 12) / 12;
+    public double getTemperaturePercentage() {
+        return this.temperature / this.maxTemperature;
+    }
+
+    public double getPressurePercentage() {
+        return this.pressure / this.maxPressure;
+    }
+
+    public double getPowerPercentage() {
+        if (this.maxPower / this.power > Math.exp(12)) {
+            return 0;
         }
+        return (Math.log(this.power / this.maxPower) + 12) / 12;
     }
 
     @NotNull
@@ -150,7 +160,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         if (flowRate < 1) flowRate = 1;
     }
 
-    public void setControlRodInsertionValue(float value) {
+    public void setControlRodInsertionValue(double value) {
         this.controlRodInsertionValue = value;
         if (fissionReactor != null)
             fissionReactor.updateControlRodInsertion(controlRodInsertionValue);
@@ -176,38 +186,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void addBarHoverText(List<ITextComponent> list, int index) {
-        if (index == 0) {
-            list.add(new TextComponentTranslation("supercritical.gui.fission.temperature",
-                    String.format("%.1f", this.temperature) + " / " + String.format("%.1f", this.maxTemperature)));
-        } else if (index == 1) {
-            list.add(new TextComponentTranslation("supercritical.gui.fission.pressure",
-                    String.format("%.0f", this.pressure) + " / " + String.format("%.0f", this.maxPressure)));
-        } else {
-            list.add(new TextComponentTranslation("supercritical.gui.fission.power", String.format("%.1f", this.power),
-                    String.format("%.1f", this.maxPower)));
-        }
+    protected void configureErrorText(MultiblockUIBuilder builder) {
+        builder.addCustom((keyManager, uiSyncer) -> {
+            if (lockingState != LockingState.LOCKED && lockingState != LockingState.UNLOCKED) {
+                keyManager.add(KeyUtil.lang(getLockedTextColor(), "supercritical.gui.fission.lock." + lockingState.toString().toLowerCase()));
+            }
+        });
     }
 
     @Override
-    protected void addErrorText(List<ITextComponent> list) {
-        if (lockingState != LockingState.LOCKED && lockingState != LockingState.UNLOCKED) {
-            list.add(
-                    new TextComponentTranslation(
-                            "supercritical.gui.fission.lock." + lockingState.toString().toLowerCase()));
-        }
-    }
-
-    @Override
-    protected void addDisplayText(List<ITextComponent> list) {
-        super.addDisplayText(list);
-        list.add(
-                TextComponentUtil.setColor(new TextComponentTranslation(
-                        "supercritical.gui.fission.lock." + lockingState.toString().toLowerCase()),
-                        getLockedTextColor()));
-        list.add(new TextComponentTranslation("supercritical.gui.fission.k_eff", String.format("%.4f", this.kEff)));
-        list.add(new TextComponentTranslation("supercritical.gui.fission.depletion",
-                String.format("%.2f", this.fuelDepletionPercent * 100)));
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.addCustom((keyManager, uiSyncer) -> {
+            keyManager.add(KeyUtil.lang(TextFormatting.WHITE, "supercritical.gui.fission.k_eff", String.format("%.4f", this.kEff)));
+            keyManager.add(KeyUtil.lang(TextFormatting.WHITE, "supercritical.gui.fission.depletion",
+                    String.format("%.2f", this.fuelDepletionPercent * 100)));
+        });
     }
 
     protected EnumFacing getUp() {
@@ -249,83 +242,134 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         return i - 1;
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 240, 208);
-
-        // Display
-        builder.image(4, 4, 232, 109, GuiTextures.DISPLAY);
-
-        // triple bar
-        ProgressWidget progressBar = new ProgressWidget(
-                () -> this.getFillPercentage(0),
-                4, 115, 76, 7,
-                SCGuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
-        builder.widget(progressBar);
-
-        progressBar = new ProgressWidget(
-                () -> this.getFillPercentage(1),
-                82, 115, 76, 7,
-                SCGuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
-        builder.widget(progressBar);
-
-        progressBar = new ProgressWidget(
-                () -> this.getFillPercentage(2),
-                160, 115, 76, 7,
-                SCGuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
-        builder.widget(progressBar);
-
-        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
-
-        builder.widget(new UpdatedSliderWidget("supercritical.gui.fission.control_rod_insertion", 10, 60, 220,
-                18, 0.0f, 1.0f,
-                (float) controlRodInsertionValue, this::setControlRodInsertionValue,
-                () -> (float) this.controlRodInsertionValue) {
-
-            @Override
-            protected String getDisplayString() {
-                return I18n.format("supercritical.gui.fission.control_rod_insertion",
-                        String.format("%.2f%%", this.getSliderValue() * 100));
-            }
-        }.setBackground(SCGuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(SCGuiTextures.DARK_SLIDER_ICON));
-        builder.widget(
-                new SliderWidget("supercritical.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
-                        this::setFlowRate).setBackground(SCGuiTextures.DARK_SLIDER_BACKGROUND)
-                                .setSliderIcon(SCGuiTextures.DARK_SLIDER_ICON));
-
-        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(220)
-                .setClickHandler(this::handleDisplayClick));
-
-        // Power Button
-
-        builder.widget(new ToggleButtonWidget(215, 183, 18, 18, GuiTextures.BUTTON_LOCK,
-                this::isLocked, this::tryLocking).shouldUseBaseBackground()
-                        .setTooltipText("supercritical.gui.fission.lock"));
-        builder.widget(new ImageWidget(215, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
-
-        // Voiding Mode Button
-        builder.widget(new ImageWidget(215, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
-                .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
-
-        builder.widget(new ImageWidget(215, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
-                .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
-
-        // Flex Button
-        builder.widget(getFlexButton(215, 125, 18, 18));
-
-        builder.bindPlayerInventory(entityPlayer.inventory, 125);
-        return builder;
+    @Override
+    public boolean shouldShowVoidingModeButton() {
+        return false;
     }
 
     @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
-        return new ToggleButtonWidget(x, y, width, height, this::areControlRodsRegulated,
-                this::toggleControlRodRegulation).setButtonTexture(SCGuiTextures.BUTTON_CONTROL_ROD_HELPER)
-                        .setTooltipText("supercritical.gui.fission.helper");
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this) {
+
+            @Override
+            protected @Nullable Widget<?> createPowerButton(@NotNull ModularPanel mainPanel,
+                                                            @NotNull PanelSyncManager panelSyncManager) {
+                return new ToggleButton().debugName("power_button").overlay(GTGuiTextures.BUTTON_LOCK).size(18)
+                        .marginTop(4)
+                        .value(new BooleanSyncValue(MetaTileEntityFissionReactor.this::isLocked,
+                                MetaTileEntityFissionReactor.this::tryLocking))
+                        .tooltipBuilder(builder -> {
+                            if (isLocked()) {
+                                builder.addLine(KeyUtil.lang("supercritical.gui.fission.lock.disabled"));
+                            } else {
+                                builder.addLine(KeyUtil.lang("supercritical.gui.fission.lock.enabled"));
+                            }
+                        });
+            }
+        }.createFlexButton((posGuiData, panelSyncManager) -> new ToggleButton()
+                .debugName("flex_button")
+                .value(new BooleanSyncValue(this::areControlRodsRegulated, this::toggleControlRodRegulation))
+                .stateOverlay(SCGuiTextures.BUTTON_CONTROL_ROD_HELPER)
+                .addTooltipLine(KeyUtil.lang("supercritical.gui.fission.helper")))
+                .addScreenChildren(((parentWidget, panelSyncManager) -> {
+                    DoubleSyncValue syncValue = new DoubleSyncValue(this::getControlRodInsertion,
+                            this::setControlRodInsertionValue);
+                    parentWidget.child(new SliderWidget()
+                            .align(Alignment.Center)
+                            .size(180, 18)
+                            .value(syncValue)
+                            .bounds(0f, 1.0f)
+                            .background(SCGuiTextures.DARK_SLIDER_BACKGROUND)
+                            .sliderTexture(SCGuiTextures.DARK_SLIDER_ICON)
+                            .onUpdateListener(widget -> {
+                                widget.overlay(KeyUtil.lang(TextFormatting.WHITE,
+                                        "supercritical.gui.fission.control_rod_insertion",
+                                        String.format("%.2f%%", syncValue.getDoubleValue() * 100)));
+                            }));
+                }))
+                .configureDisplayText(this::configureDisplayText).configureWarningText(this::configureWarningText)
+                .configureErrorText(this::configureErrorText);
     }
+
+    /*
+     * @Override
+     * protected ModularUI createUI(EntityPlayer entityPlayer) {
+     * ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 240, 208);
+     * 
+     * // Display
+     * builder.image(4, 4, 232, 109, GuiTextures.DISPLAY);
+     * 
+     * // triple bar
+     * ProgressWidget progressBar = new ProgressWidget(
+     * () -> this.getFillPercentage(0),
+     * 4, 115, 76, 7,
+     * SCGuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL).setHoverTextConsumer(list ->
+     * this.addBarHoverText(list, 0));
+     * builder.widget(progressBar);
+     * 
+     * progressBar = new ProgressWidget(
+     * () -> this.getFillPercentage(1),
+     * 82, 115, 76, 7,
+     * SCGuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
+     * .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
+     * builder.widget(progressBar);
+     * 
+     * progressBar = new ProgressWidget(
+     * () -> this.getFillPercentage(2),
+     * 160, 115, 76, 7,
+     * SCGuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
+     * .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
+     * builder.widget(progressBar);
+     * 
+     * builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
+     * 
+     * builder.widget(new UpdatedSliderWidget("supercritical.gui.fission.control_rod_insertion", 10, 60, 220,
+     * 18, 0.0f, 1.0f,
+     * (float) controlRodInsertionValue, this::setControlRodInsertionValue,
+     * () -> (float) this.controlRodInsertionValue) {
+     * 
+     * @Override
+     * protected String getDisplayString() {
+     * return I18n.format("supercritical.gui.fission.control_rod_insertion",
+     * String.format("%.2f%%", this.getSliderValue() * 100));
+     * }
+     * }.setBackground(SCGuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(SCGuiTextures.DARK_SLIDER_ICON));
+     * builder.widget(
+     * new SliderWidget("supercritical.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
+     * this::setFlowRate).setBackground(SCGuiTextures.DARK_SLIDER_BACKGROUND)
+     * .setSliderIcon(SCGuiTextures.DARK_SLIDER_ICON));
+     * 
+     * builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
+     * .setMaxWidthLimit(220));
+     * 
+     * // Power Button
+     * 
+     * builder.widget(new ToggleButtonWidget(215, 183, 18, 18, GuiTextures.BUTTON_LOCK,
+     * this::isLocked, this::tryLocking).shouldUseBaseBackground()
+     * .setTooltipText("supercritical.gui.fission.lock"));
+     * builder.widget(new ImageWidget(215, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+     * 
+     * // Voiding Mode Button
+     * builder.widget(new ImageWidget(215, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+     * .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
+     * 
+     * builder.widget(new ImageWidget(215, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+     * .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
+     * 
+     * // Flex Button
+     * builder.widget(getFlexButton(215, 125, 18, 18));
+     * 
+     * builder.bindPlayerInventory(entityPlayer.inventory, 125);
+     * return builder.build((IUIHolder) this, entityPlayer);
+     * }
+     * 
+     * protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+     * return new ToggleButtonWidget(x, y, width, height, this::areControlRodsRegulated,
+     * this::toggleControlRodRegulation).setButtonTexture(SCGuiTextures.BUTTON_CONTROL_ROD_HELPER)
+     * .setTooltipText("supercritical.gui.fission.helper");
+     * }
+     * 
+     */
 
     private TextFormatting getLockedTextColor() {
         return switch (lockingState) {
@@ -918,6 +962,46 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     public long getCoverStored() {
         // power is in MW
         return (long) (this.power * 1e6);
+    }
+
+    @Override
+    public int getProgressBarCount() {
+        return 3;
+    }
+
+    @Override
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> list, PanelSyncManager panelSyncManager) {
+        list.add(bar -> {
+            DoubleSyncValue tempPercentage = new DoubleSyncValue(this::getTemperaturePercentage);
+            DoubleSyncValue temperature = new DoubleSyncValue(this::getTemperature);
+            bar.value(tempPercentage)
+                    .texture(SCGuiTextures.PROGRESS_BAR_FISSION_HEAT)
+                    .tooltipBuilder(t -> t.setAutoUpdate(true)
+                            .addLine(IKey.lang("supercritical.gui.fission.temperature",
+                                    String.format("%.1f", temperature.getDoubleValue()) + " / " +
+                                            String.format("%.1f", this.maxTemperature))));
+            return bar;
+        });
+        list.add(bar -> {
+            DoubleSyncValue pressurePercentage = new DoubleSyncValue(this::getPressurePercentage);
+            DoubleSyncValue pressure = new DoubleSyncValue(this::getPressure);
+            bar.value(pressurePercentage)
+                    .texture(SCGuiTextures.PROGRESS_BAR_FISSION_PRESSURE)
+                    .tooltipBuilder(t -> t.setAutoUpdate(true).addLine(IKey.lang("supercritical.gui.fission.pressure",
+                            String.format("%.0f", pressure.getDoubleValue()) + " / " +
+                                    String.format("%.0f", this.maxPressure))));
+            return bar;
+        });
+        list.add(bar -> {
+            DoubleSyncValue powerPercentage = new DoubleSyncValue(this::getPowerPercentage);
+            DoubleSyncValue power = new DoubleSyncValue(this::getPower);
+            bar.value(powerPercentage)
+                    .texture(SCGuiTextures.PROGRESS_BAR_FISSION_ENERGY)
+                    .tooltipBuilder(t -> t.setAutoUpdate(true).addLine(IKey.lang("supercritical.gui.fission.power",
+                            String.format("%.1f", power.getDoubleValue()) + " / " +
+                                    String.format("%.1f", this.maxPower))));
+            return bar;
+        });
     }
 
     public enum LockingState {

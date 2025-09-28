@@ -3,7 +3,6 @@ package supercritical.common;
 import java.util.Objects;
 import java.util.function.Function;
 
-import gregtech.api.metatileentity.registry.MTEManager;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
+import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;

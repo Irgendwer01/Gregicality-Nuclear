@@ -43,11 +43,11 @@ public class SCMaterials {
     public static Material HighPressureSteam;
     public static Material FissilePlutoniumDioxide;
     public static Material Zircaloy;
-    //public static Material Zircon;
+    // public static Material Zircon;
     public static Material ZirconiumDioxide;
-    //public static Material ZirconiumTetrachloride;
+    // public static Material ZirconiumTetrachloride;
     public static Material HafniumDioxide;
-    //public static Material HafniumTetrachloride;
+    // public static Material HafniumTetrachloride;
     public static Material Inconel;
     public static Material BoronTrioxide;
     public static Material BoronCarbide;

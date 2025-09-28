@@ -2,9 +2,6 @@ package supercritical.common.metatileentities.multi.multiblockpart;
 
 import static supercritical.SCValues.FISSION_LOCK_UPDATE;
 
-import java.util.List;
-
-import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -30,6 +27,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;

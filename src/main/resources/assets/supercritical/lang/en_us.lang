@@ -156,8 +156,7 @@ supercritical.gui.fission.lock.invalid_component=Erm, what the flip? Check your 
 supercritical.gui.fission.lock.disabled=Lock Fuel and Coolant types and start the Reactor
 supercritical.gui.fission.lock.enabled=Unlock Fuel and Coolant types and stop the Reactor
 
-supercritical.gui.fission.helper.disabled=When I'm smiling, I regulate your control rods for you! - Smiley, the Control Rod Specialist
-supercritical.gui.fission.helper.enabled=When I'm smiling, I regulate your control rods for you! - Smiley, the Control Rod Specialist
+supercritical.gui.fission.helper=When I'm smiling, I regulate your control rods for you! - Smiley, the Control Rod Specialist
 
 supercritical.gui.locked=(Locked)
 

@@ -70,13 +70,13 @@ public class FirstDegreeMaterials {
                 .setFormula("UO2", true);
 
         /*
-        Zircon = new Material.Builder(506, scId("zircon"))
-                .gem().ore()
-                .color(0x6E0909)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
-                .iconSet(SHINY)
-                .build();
+         * Zircon = new Material.Builder(506, scId("zircon"))
+         * .gem().ore()
+         * .color(0x6E0909)
+         * .flags(DISABLE_DECOMPOSITION)
+         * .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+         * .iconSet(SHINY)
+         * .build();
          */
 
         ZirconiumDioxide = new Material.Builder(507, scId("zirconium_dioxide"))
@@ -87,13 +87,13 @@ public class FirstDegreeMaterials {
                 .build();
 
         /*
-        ZirconiumTetrachloride = new Material.Builder(508, scId("zirconium_tetrachloride"))
-                .dust()
-                .color(0x689FBF)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Zirconium, 1, Chlorine, 4)
-                .iconSet(SHINY)
-                .build();
+         * ZirconiumTetrachloride = new Material.Builder(508, scId("zirconium_tetrachloride"))
+         * .dust()
+         * .color(0x689FBF)
+         * .flags(DISABLE_DECOMPOSITION)
+         * .components(Zirconium, 1, Chlorine, 4)
+         * .iconSet(SHINY)
+         * .build();
          */
 
         HafniumDioxide = new Material.Builder(509, scId("hafnium_dioxide"))
@@ -104,13 +104,13 @@ public class FirstDegreeMaterials {
                 .build();
 
         /*
-        HafniumTetrachloride = new Material.Builder(510, scId("hafnium_tetrachloride"))
-                .dust()
-                .color(0x69699A)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Hafnium, 1, Chlorine, 4)
-                .iconSet(SHINY)
-                .build();
+         * HafniumTetrachloride = new Material.Builder(510, scId("hafnium_tetrachloride"))
+         * .dust()
+         * .color(0x69699A)
+         * .flags(DISABLE_DECOMPOSITION)
+         * .components(Hafnium, 1, Chlorine, 4)
+         * .iconSet(SHINY)
+         * .build();
          */
 
         Inconel = new Material.Builder(511, scId("inconel"))

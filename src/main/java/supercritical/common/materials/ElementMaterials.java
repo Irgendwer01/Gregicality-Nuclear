@@ -1,13 +1,11 @@
 package supercritical.common.materials;
 
-import static gregtech.api.unification.material.Materials.EXT_METAL;
 import static gregtech.api.unification.material.info.MaterialIconSet.METALLIC;
 import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
 import static supercritical.api.unification.material.SCMaterials.*;
 import static supercritical.api.util.SCUtility.scId;
 
 import gregtech.api.fluids.FluidBuilder;
-import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import supercritical.api.unification.SCElements;
 
@@ -17,15 +15,14 @@ import supercritical.api.unification.SCElements;
 public class ElementMaterials {
 
     public static void register() {
-
         /*
-        Uranium = new Material.Builder(1, scId("uranium"))
-                .ingot(3)
-                .liquid(new FluidBuilder().temperature(1405))
-                .color(0x32F032).iconSet(METALLIC)
-                .flags(EXT_METAL)
-                .element(Elements.U)
-                .build();
+         * Uranium = new Material.Builder(1, scId("uranium"))
+         * .ingot(3)
+         * .liquid(new FluidBuilder().temperature(1405))
+         * .color(0x32F032).iconSet(METALLIC)
+         * .flags(EXT_METAL)
+         * .element(Elements.U)
+         * .build();
          */
 
         Uranium239 = new Material.Builder(2, scId("uranium_239"))
@@ -78,10 +75,10 @@ public class ElementMaterials {
                 .build();
 
         /*
-        Plutonium = new Material.Builder(11, scId("plutonium"))
-                .color(0xF03232).iconSet(METALLIC)
-                .element(Elements.Pu)
-                .build();
+         * Plutonium = new Material.Builder(11, scId("plutonium"))
+         * .color(0xF03232).iconSet(METALLIC)
+         * .element(Elements.Pu)
+         * .build();
          */
     }
 }

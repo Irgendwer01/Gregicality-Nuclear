@@ -5,7 +5,6 @@ import static supercritical.SCValues.FISSION_LOCK_UPDATE;
 import java.io.IOException;
 import java.util.List;
 
-import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,6 +28,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;

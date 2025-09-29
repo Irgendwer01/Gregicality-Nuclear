@@ -28,7 +28,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -189,7 +188,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.addCustom((keyManager, uiSyncer) -> {
             if (lockingState != LockingState.LOCKED && lockingState != LockingState.UNLOCKED) {
-                keyManager.add(KeyUtil.lang(getLockedTextColor(), "supercritical.gui.fission.lock." + lockingState.toString().toLowerCase()));
+                keyManager.add(KeyUtil.lang(getLockedTextColor(),
+                        "supercritical.gui.fission.lock." + lockingState.toString().toLowerCase()));
             }
         });
     }
@@ -197,7 +197,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.addCustom((keyManager, uiSyncer) -> {
-            keyManager.add(KeyUtil.lang(TextFormatting.WHITE, "supercritical.gui.fission.k_eff", String.format("%.4f", this.kEff)));
+            keyManager.add(KeyUtil.lang(TextFormatting.WHITE, "supercritical.gui.fission.k_eff",
+                    String.format("%.4f", this.kEff)));
             keyManager.add(KeyUtil.lang(TextFormatting.WHITE, "supercritical.gui.fission.depletion",
                     String.format("%.2f", this.fuelDepletionPercent * 100)));
         });
@@ -971,35 +972,46 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
     @Override
     public void registerBars(List<UnaryOperator<TemplateBarBuilder>> list, PanelSyncManager panelSyncManager) {
+        DoubleSyncValue tempPercentage = new DoubleSyncValue(this::getTemperaturePercentage);
+        DoubleSyncValue temperature = new DoubleSyncValue(this::getTemperature);
+        DoubleSyncValue maxTemp = new DoubleSyncValue(this::getMaxTemperature);
+
+        DoubleSyncValue pressurePercentage = new DoubleSyncValue(this::getPressurePercentage);
+        DoubleSyncValue pressure = new DoubleSyncValue(this::getPressure);
+        DoubleSyncValue maxPressure = new DoubleSyncValue(this::getMaxPressure);
+
+        DoubleSyncValue powerPercentage = new DoubleSyncValue(this::getPowerPercentage);
+        DoubleSyncValue power = new DoubleSyncValue(this::getPower);
+        DoubleSyncValue maxPower = new DoubleSyncValue(this::getMaxPower);
+
         list.add(bar -> {
-            DoubleSyncValue tempPercentage = new DoubleSyncValue(this::getTemperaturePercentage);
-            DoubleSyncValue temperature = new DoubleSyncValue(this::getTemperature);
+
             bar.value(tempPercentage)
                     .texture(SCGuiTextures.PROGRESS_BAR_FISSION_HEAT)
                     .tooltipBuilder(t -> t.setAutoUpdate(true)
-                            .addLine(IKey.lang("supercritical.gui.fission.temperature",
+                            .addLine(KeyUtil.lang("supercritical.gui.fission.temperature",
                                     String.format("%.1f", temperature.getDoubleValue()) + " / " +
-                                            String.format("%.1f", this.maxTemperature))));
+                                            String.format("%.1f", maxTemp.getDoubleValue()))));
             return bar;
         });
         list.add(bar -> {
-            DoubleSyncValue pressurePercentage = new DoubleSyncValue(this::getPressurePercentage);
-            DoubleSyncValue pressure = new DoubleSyncValue(this::getPressure);
+
             bar.value(pressurePercentage)
                     .texture(SCGuiTextures.PROGRESS_BAR_FISSION_PRESSURE)
-                    .tooltipBuilder(t -> t.setAutoUpdate(true).addLine(IKey.lang("supercritical.gui.fission.pressure",
-                            String.format("%.0f", pressure.getDoubleValue()) + " / " +
-                                    String.format("%.0f", this.maxPressure))));
+                    .tooltipBuilder(t -> t.setAutoUpdate(true)
+                            .addLine(KeyUtil.lang("supercritical.gui.fission.pressure",
+                                    String.format("%.0f", pressure.getDoubleValue()) + " / " +
+                                            String.format("%.0f", maxPressure.getDoubleValue()))));
             return bar;
         });
         list.add(bar -> {
-            DoubleSyncValue powerPercentage = new DoubleSyncValue(this::getPowerPercentage);
-            DoubleSyncValue power = new DoubleSyncValue(this::getPower);
+
             bar.value(powerPercentage)
                     .texture(SCGuiTextures.PROGRESS_BAR_FISSION_ENERGY)
-                    .tooltipBuilder(t -> t.setAutoUpdate(true).addLine(IKey.lang("supercritical.gui.fission.power",
-                            String.format("%.1f", power.getDoubleValue()) + " / " +
-                                    String.format("%.1f", this.maxPower))));
+                    .tooltipBuilder(t -> t.setAutoUpdate(true)
+                            .addLine(KeyUtil.lang("supercritical.gui.fission.power",
+                                    String.format("%.1f", power.getDoubleValue()),
+                                    String.format("%.1f", maxPower.getDoubleValue()))));
             return bar;
         });
     }

@@ -61,7 +61,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             coolantInfos.add(new CoolantInfo(coolant, CoolantRegistry.getCoolant(coolant).getHotCoolant()));
         }
 
-        String coolantID = SCValues.MODID + ":" + "coolant";
+        String coolantID = SCValues.MODID + "." + "coolant";
         registry.addRecipes(coolantInfos, coolantID);
         registry.addRecipeCatalyst(SCMetaTileEntities.FISSION_REACTOR.getStackForm(), coolantID);
         // Nuclear End

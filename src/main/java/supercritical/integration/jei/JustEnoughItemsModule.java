@@ -50,7 +50,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     FissionFuelRegistry.getDepletedFuel(FissionFuelRegistry.getFissionFuel(fuel))));
         }
 
-        String fissionFuelID = SCValues.MODID + ":" + "fission_fuel";
+        String fissionFuelID = SCValues.MODID + "." + "fission_fuel";
 
         registry.addRecipes(fissionFuelInfos, fissionFuelID);
         registry.addRecipeCatalyst(SCMetaTileEntities.FISSION_REACTOR.getStackForm(), fissionFuelID);
